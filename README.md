@@ -45,7 +45,7 @@ Pixiu Flow là ứng dụng web quản lý tài chính dành cho chủ kinh doan
 1. Truy cập website Pixiu Flow được triển khai công khai trên Railway qua link demo bên dưới.
 2. Chọn **Đăng ký**, tạo tài khoản mới và hoàn thành bước thiết lập thông tin ban đầu.
 3. Khai báo sản phẩm hoặc tồn kho có sẵn nếu cần, sau đó ghi nhận thử doanh thu, nhập hàng và chi phí.
-4. Mở các trang **Bảng theo dõi**, **Sản phẩm & tồn kho**, **Lịch sử giao dịch** và **Phân tích** để xem kết quả demo.
+4. Mở các trang **Bảng theo dõi**, **Sản phẩm & tồn kho**, **Lịch sử giao dịch** và **Xem thêm chỉ số** để xem kết quả demo.
 
 ## Link demo
 
