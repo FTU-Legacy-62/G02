@@ -16,12 +16,11 @@
 | Nguyễn Thanh Ngân | 2312380021 | Nghiên cứu dữ liệu, người dùng và logic tài chính |
 | Kiều Xuân Thuỷ | 2311380703 |  UI/UX Designer |
 | Nguyễn Bảo Ngọc | 2313380022 | UI/UX Designer |
-| Vũ Đức Anh | 2312380806 | Nghiên cứu dữ liệu, người dùng và logic tài chính |
+| Vũ Đức Anh | 2312380806 | Nghiên cứu người dùng và logic tài chính |
 
 ## Mô tả sản phẩm
 
 Pixiu Flow là ứng dụng web quản lý tài chính dành cho chủ kinh doanh nhỏ và người bán hàng cá nhân — những người thường theo dõi thu chi bằng trực giác hoặc ghi chép thủ công mà không có công cụ hỗ trợ rõ ràng. Sản phẩm giúp ghi nhận giao dịch, quản lý sản phẩm và tồn kho, doanh thu và chi phí trên một hệ thống thống nhất. Pixiu Flow được thiết kế để người không có kiến thức tài chính vẫn hiểu được mình đang lời hay lỗ, và lỗ ở đâu. Từ đó, người dùng có thể đưa ra quyết định kinh doanh dựa trên số liệu thực tế thay vì cảm tính.
-
 
 ## Vấn đề sản phẩm giải quyết
 - **Vấn đề:** Nhiều chủ kinh doanh nhỏ tin rằng mình đang có lời vì bán giá cao hơn giá vốn — nhưng thực tế không tính đến các chi phí phát sinh khác như tiền điện, thuê mặt bằng, hao hụt hàng hóa hay khấu hao thiết bị. Kết quả là họ không biết mình thực sự đang lời hay lỗ, và nếu lỗ thì lỗ ở đâu.
