@@ -1,0 +1,981 @@
+﻿{% extends 'core/base.html' %}
+{% load format_utils %}
+{% load static %}
+
+{% block title %}Ghi nhận chi phí - Pixiu Flow{% endblock %}
+
+{% block content %}
+<div class="transaction-page">
+    <header class="transaction-topbar">
+        <div class="transaction-search">
+            <i data-lucide="search"></i>
+            <input type="search" placeholder="Tìm kiếm giao dịch, đối tác...">
+        </div>
+        <div class="topbar-actions">
+            <button type="button" class="icon-btn" aria-label="Thông báo">
+                <i data-lucide="bell"></i>
+            </button>
+            <div class="topbar-user">
+                <div>
+                    <strong>{{ owner_name }}</strong>
+                    <span>Chủ doanh nghiệp</span>
+                </div>
+                <img src="{% static 'core/images/pixiu_logo.png' %}" alt="{{ owner_name }}">
+            </div>
+        </div>
+    </header>
+
+    <section class="transaction-content">
+        <div class="transaction-heading">
+            <h1>Ghi nhận giao dịch</h1>
+            <p>Ghi nhận, theo dõi và quản lý giao dịch doanh thu &amp; chi phí một cách chuyên nghiệp.</p>
+        </div>
+
+        <a href="/transactions/bulk-create/" class="bulk-suggestion-card transaction-heading-suggestion">
+            <i data-lucide="message-square-text"></i>
+            <span>
+                <strong>Bạn muốn ghi nhận nhiều giao dịch cùng lúc?</strong>
+                <small>Mở bảng nhập nhanh</small>
+            </span>
+            <b>Đi tới</b>
+        </a>
+
+        <div class="transaction-layout transaction-layout--compact">
+            <form method="post" class="transaction-card transaction-card--sale" id="expenseForm">
+                {% csrf_token %}
+                <img src="{% static 'core/images/Pixiu_on_top.PNG' %}" alt="Pixiu" class="transaction-card-mascot">
+
+                <div class="transaction-tabs">
+                    <a href="/sales/create/">Doanh thu mới</a>
+                    <a href="/expenses/create/" class="active">Chi phí mới</a>
+                    <a href="/transactions/bulk-create/" class="bulk-entry-link">
+                        <i data-lucide="table-2"></i>
+                        Nhập nhiều cùng lúc
+                        <i data-lucide="arrow-up-right"></i>
+                    </a>
+
+                </div>
+
+                {% if form.non_field_errors %}
+                <div class="transaction-errors">{{ form.non_field_errors }}</div>
+                {% endif %}
+                {% if expense_errors %}
+                <div class="transaction-errors">
+                    {% for error in expense_errors %}<div>{{ error }}</div>{% endfor %}
+                </div>
+                {% endif %}
+
+                <input type="hidden" name="expense_mode" id="expenseMode" value="{{ expense_mode|default:'purchase' }}">
+
+                <div class="expense-mode-box">
+                    <p>Chi phí nhập hàng hay chi phí khác?</p>
+                    <div>
+                        <button type="button" class="expense-mode-btn" data-mode="purchase">
+                            <i data-lucide="package-plus"></i>
+                            Chi phí nhập hàng
+                        </button>
+                        <button type="button" class="expense-mode-btn" data-mode="other">
+                            <i data-lucide="receipt-text"></i>
+                            Chi phí khác
+                        </button>
+                    </div>
+                </div>
+
+                {# ── SECTION: NHẬP HÀNG ── #}
+                <div class="expense-mode-section" data-section="purchase">
+                    <div class="sale-top-grid">
+                        <label>
+                            <span>Ngày giao dịch</span>
+                            <input type="date" name="purchase_date" value="{{ purchase_values.date }}">
+                        </label>
+                        <label>
+                            <span>Nhà cung cấp</span>
+                            <input type="text" name="purchase_supplier_name" value="{{ purchase_values.supplier_name }}" placeholder="Nhà cung cấp">
+                        </label>
+                    </div>
+
+                    <div class="order-box order-box--items expense-detail-box">
+                        <div class="order-box__title">
+                            <strong><i data-lucide="package-plus"></i> Chi tiết nhập hàng</strong>
+                            <span id="purchaseItemCount">Đang nhập 01 mục</span>
+                        </div>
+                        <div class="expense-purchase-head">
+                            <span>#</span>
+                            <span>Sản phẩm</span>
+                            <span>Đơn giá nhập (VND)</span>
+                            <span>Số lượng</span>
+                            <span>Thành tiền (VND)</span>
+                            <span></span>
+                        </div>
+                        <div class="expense-purchase-items" id="purchaseItems">
+                            {% for row in purchase_rows %}
+                            <div class="expense-purchase-row">
+                                <span class="sale-item-index">{{ forloop.counter }}</span>
+                                <div class="purchase-product-cell">
+                                    <select name="purchase_product[]" class="purchase-product">
+                                        <option value="">Chọn sản phẩm</option>
+                                        {% for product in products %}
+                                        <option value="{{ product.id }}" data-price="{{ product.price_buy_latest }}" {% if row.product == product.id|stringformat:"s" %}selected{% endif %}>{{ product.name }}</option>
+                                        {% endfor %}
+                                        <option value="__new__" {% if row.product == "__new__" %}selected{% endif %}>+ Sản phẩm mới</option>
+                                    </select>
+                                    <input type="text" name="purchase_new_product_name[]" class="purchase-new-product-name" value="{{ row.new_product_name|default:'' }}" placeholder="Tên sản phẩm mới">
+                                </div>
+                                <input type="text" name="purchase_unit_price[]" class="purchase-unit-price" inputmode="numeric" value="{{ row.unit_price|default:'' }}" placeholder="Đơn giá">
+                                <input type="number" name="purchase_quantity[]" class="purchase-quantity" min="1" step="1" value="{{ row.quantity|default:'' }}" placeholder="Số lượng">
+                                <input type="text" class="purchase-row-total" value="0" readonly>
+                                <button type="button" class="sale-remove-row" aria-label="Xóa sản phẩm">
+                                    <i data-lucide="trash-2"></i>
+                                </button>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="sale-add-row" id="addPurchaseItem">
+                            <i data-lucide="plus"></i>
+                            Thêm sản phẩm nhập hàng
+                        </button>
+                    </div>
+
+                    {# Payment box — nhập hàng #}
+                    <div class="payment-box">
+                        <div class="order-box__title">
+                            <strong><i data-lucide="credit-card"></i> Thanh toán</strong>
+                        </div>
+                        <div class="sale-top-grid">
+                            <label>
+                                <span>Phương thức thanh toán</span>
+                                <select name="purchase_payment_method" id="purchasePaymentMethod">
+                                    {% for value, label in payment_method_choices %}
+                                    <option value="{{ value }}" {% if purchase_values.payment_method == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </label>
+                            <label class="debt-field" id="purchaseDebtField">
+                                <span>Ngày cần thanh toán</span>
+                                <input type="date" name="purchase_payment_due_date" id="purchasePaymentDueDate" value="{{ purchase_values.payment_due_date }}">
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="sale-bottom-grid">
+                        <label>
+                            <span>Ghi chú nhập hàng</span>
+                            <textarea name="purchase_note" rows="2" placeholder="Ghi chép về nhập hàng">{{ purchase_values.note }}</textarea>
+                        </label>
+                        <label>
+                            <span>Ghi chú hóa đơn</span>
+                            <textarea rows="2" placeholder="Kéo thả hoặc ghi chú hóa đơn tại đây"></textarea>
+                        </label>
+                    </div>
+                </div>
+
+                {# ── SECTION: CHI PHÍ KHÁC ── #}
+                <div class="expense-mode-section" data-section="other">
+                    <div class="sale-top-grid">
+                        <label>
+                            <span>Ngày giao dịch</span>
+                            <input type="date" name="expense_date" value="{{ other_expense_values.date|default:other_expense_date }}">
+                        </label>
+                    </div>
+
+                    <div class="order-box order-box--items expense-detail-box">
+                        <div class="order-box__title">
+                            <strong><i data-lucide="receipt-text"></i> Chi tiết chi phí</strong>
+                            <span id="otherExpenseCount">Đang nhập 01 mục</span>
+                        </div>
+                        <div class="expense-other-head">
+                            <span>#</span>
+                            <span>Nhóm chi phí</span>
+                            <span class="expense-amount-head">Số tiền (VND)</span>
+                            <span class="equipment-head-lifetime" id="equipmentLifetimeHead">Thời gian sử dụng (tháng)<b title="Số tháng dự kiến sử dụng hoặc hưởng lợi từ chi phí. Ví dụ: trả trước mặt bằng 3 tháng thì nhập 3 để chi phí được chia đều; để trống nếu tính toàn bộ vào kỳ phát sinh."></b></span>
+                            <span id="expenseNoteHead">Ghi chú</span>
+                            <span></span>
+                        </div>
+                        <div class="expense-other-items" id="otherExpenseItems">
+                            {% for row in other_expense_rows %}
+                            <div class="expense-other-row">
+                                <span class="sale-item-index">{{ forloop.counter }}</span>
+                                <select name="expense_type[]" class="other-expense-type">
+                                    {% for value, label in expense_type_choices %}
+                                    <option value="{{ value }}" {% if row.expense_type == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                                <input type="text" name="expense_amount[]" class="other-expense-amount" inputmode="numeric" value="{{ row.amount|default:'' }}" placeholder="Số tiền">
+                                <label class="equipment-lifetime-field">
+                                    <input type="number" name="expense_estimated_lifetime_months[]" class="equipment-lifetime-input" min="1" step="1" value="{{ row.estimated_lifetime_months|default:'' }}" placeholder="Sử dụng (tháng)" aria-label="Thời gian sử dụng theo tháng">
+                                </label>
+                                <input type="text" name="expense_note[]" class="other-expense-note" value="{{ row.note|default:'' }}" placeholder="Ghi chú">
+                                <input type="text" name="expense_equipment_memo[]" class="equipment-note-row" value="{{ row.equipment_memo|default:'' }}" placeholder="Ghi chú thêm cho thiết bị (không bắt buộc)">
+                                <button type="button" class="sale-remove-row" aria-label="Xóa chi phí">
+                                    <i data-lucide="trash-2"></i>
+                                </button>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="sale-add-row" id="addOtherExpense">
+                            <i data-lucide="plus"></i>
+                            Thêm chi phí khác
+                        </button>
+                    </div>
+
+                    {# Payment box — chi phí khác (giống purchase) #}
+                    <div class="payment-box">
+                        <div class="order-box__title">
+                            <strong><i data-lucide="credit-card"></i> Thanh toán</strong>
+                        </div>
+                        <div class="sale-top-grid">
+                            <label>
+                                <span>Phương thức thanh toán</span>
+                                <select name="expense_payment_method" id="otherPaymentMethod">
+                                    {% for value, label in payment_method_choices %}
+                                    <option value="{{ value }}" {% if other_expense_values.payment_method == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </label>
+                            <label class="debt-field" id="otherDebtField">
+                                <span>Ngày cần thanh toán</span>
+                                <input type="date" name="expense_payment_due_date" id="otherPaymentDueDate" value="{{ other_expense_values.payment_due_date }}">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="transaction-card__footer">
+                    <div>
+                        <span>Tổng chi phí:</span>
+                        <strong id="expenseFooterTotal">0 VND</strong>
+                    </div>
+                    <a href="/transactions/history/" class="secondary-action">Hủy</a>
+                    <button type="submit">Lưu chi phí</button>
+                </div>
+            </form>
+
+            {% include 'core/transaction_side.html' %}
+        </div>
+    </section>
+
+    <footer class="dashboard-footer">
+        <span>© 2026 PIXIU FLOW - NỀN TẢNG QUẢN LÍ TÀI CHÍNH DOANH NGHIỆP THÔNG MINH. PHIÊN BẢN 1.0-BETA</span>
+        <nav>
+            <a href="#">Hỗ trợ</a>
+            <a href="#">Điều khoản</a>
+            <a href="#">Bảo mật</a>
+        </nav>
+    </footer>
+</div>
+
+{# Templates cho thêm dòng động #}
+<template id="purchaseItemTemplate">
+    <div class="expense-purchase-row">
+        <span class="sale-item-index"></span>
+        <div class="purchase-product-cell">
+            <select name="purchase_product[]" class="purchase-product">
+                <option value="">Chọn sản phẩm</option>
+                {% for product in products %}
+                <option value="{{ product.id }}" data-price="{{ product.price_buy_latest }}">{{ product.name }}</option>
+                {% endfor %}
+                <option value="__new__">+ Sản phẩm mới</option>
+            </select>
+            <input type="text" name="purchase_new_product_name[]" class="purchase-new-product-name" placeholder="Tên sản phẩm mới">
+        </div>
+        <input type="text" name="purchase_unit_price[]" class="purchase-unit-price" inputmode="numeric" placeholder="Đơn giá">
+        <input type="number" name="purchase_quantity[]" class="purchase-quantity" min="1" step="1" placeholder="Số lượng">
+        <input type="text" class="purchase-row-total" value="0" readonly>
+        <button type="button" class="sale-remove-row" aria-label="Xóa sản phẩm">
+            <i data-lucide="trash-2"></i>
+        </button>
+    </div>
+</template>
+
+<template id="otherExpenseTemplate">
+    <div class="expense-other-row">
+        <span class="sale-item-index"></span>
+        <select name="expense_type[]" class="other-expense-type">
+            {% for value, label in expense_type_choices %}
+            <option value="{{ value }}">{{ label }}</option>
+            {% endfor %}
+        </select>
+        <input type="text" name="expense_amount[]" class="other-expense-amount" inputmode="numeric" placeholder="Số tiền">
+        <label class="equipment-lifetime-field">
+            <input type="number" name="expense_estimated_lifetime_months[]" class="equipment-lifetime-input" min="1" step="1" placeholder="Sử dụng (tháng)" aria-label="Thời gian sử dụng theo tháng">
+        </label>
+        <input type="text" name="expense_note[]" class="other-expense-note" placeholder="Ghi chú">
+        <input type="text" name="expense_equipment_memo[]" class="equipment-note-row" placeholder="Ghi chú thêm cho thiết bị (không bắt buộc)">
+        <button type="button" class="sale-remove-row" aria-label="Xóa chi phí">
+            <i data-lucide="trash-2"></i>
+        </button>
+    </div>
+</template>
+
+{# Modal thêm sản phẩm mới khi nhập hàng #}
+<div class="product-modal-backdrop" id="purchaseProductModal" hidden>
+    <div class="product-modal-card" role="dialog" aria-modal="true" aria-labelledby="purchaseProductModalTitle">
+        <div class="product-modal-head">
+            <div>
+                <h2 id="purchaseProductModalTitle">Thêm sản phẩm mới</h2>
+                <p>Tạo sản phẩm trước, phiếu nhập hàng sẽ được ghi khi bạn lưu chi phí.</p>
+            </div>
+            <button type="button" class="product-modal-close" id="closePurchaseProductModal" aria-label="Đóng">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <div class="product-modal-grid">
+            <label class="product-modal-field product-modal-field--wide">
+                <span>Tên sản phẩm <span class="required-mark" aria-label="bắt buộc">*</span></span>
+                <input type="text" id="purchaseModalProductName" placeholder="Ví dụ: Cà phê sữa">
+            </label>
+            <label class="product-modal-field">
+                <span>Đơn vị tính</span>
+                <input type="text" id="purchaseModalProductUnit" value="cái" placeholder="cái, hộp, kg...">
+            </label>
+            <label class="product-modal-field">
+                <span>Ngưỡng cảnh báo kho</span>
+                <input type="number" id="purchaseModalProductAlert" min="0" value="10">
+            </label>
+            <label class="product-modal-field">
+                <span>Giá bán mặc định (VND) <span class="required-mark" aria-label="bắt buộc">*</span></span>
+                <input type="text" id="purchaseModalProductSellPrice" inputmode="numeric" placeholder="Ví dụ: 20.000">
+            </label>
+            <div class="product-modal-field product-modal-field--wide category-choice-field category-level-section" id="purchaseCategoryLevel1Section">
+                <span>Danh mục <span class="required-mark" aria-label="bắt buộc">*</span></span>
+                <div class="category-level-control">
+                    <select id="purchaseModalCategory1Select"></select>
+                    <button type="button" class="category-remove-level" data-purchase-category-remove="1" aria-label="Xóa danh mục cấp 1">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <input type="text" id="purchaseModalCategory1New" placeholder="Nhập danh mục cấp 1 mới" hidden>
+            </div>
+
+            <div id="purchaseAddCategory2ButtonWrapper" class="category-add-wrapper" hidden>
+                <button type="button" id="purchaseAddCategory2Btn" class="category-add-link-block">
+                    + Thêm phân loại cấp 2 (tuỳ chọn)
+                </button>
+            </div>
+
+            <div id="purchaseCategoryLevel2Section" class="category-level-section" hidden>
+                <div class="category-level-wrapper">
+                    <div class="product-modal-field category-choice-field">
+                        <span>Phân loại cấp 2 <span class="modal-field-badge">tuỳ chọn</span></span>
+                        <div class="category-level-control">
+                            <select id="purchaseModalCategory2Select"></select>
+                            <button type="button" class="category-remove-level" data-purchase-category-remove="2" aria-label="Xóa phân loại cấp 2">
+                                <i data-lucide="x"></i>
+                            </button>
+                        </div>
+                        <input type="text" id="purchaseModalCategory2New" placeholder="Nhập danh mục cấp 2 mới" hidden>
+                    </div>
+
+                    <div id="purchaseAddCategory3ButtonWrapper" class="category-add-wrapper category-add-wrapper--nested" hidden>
+                        <button type="button" id="purchaseAddCategory3Btn" class="category-add-link">
+                            + Thêm phân loại cấp 3 (tuỳ chọn)
+                        </button>
+                    </div>
+
+                    <div id="purchaseCategoryLevel3Section" class="category-level-section category-level-section--nested" hidden>
+                        <div class="product-modal-field category-choice-field">
+                            <span>Phân loại cấp 3 <span class="modal-field-badge">tuỳ chọn</span></span>
+                            <div class="category-level-control">
+                                <select id="purchaseModalCategory3Select"></select>
+                                <button type="button" class="category-remove-level" data-purchase-category-remove="3" aria-label="Xóa phân loại cấp 3">
+                                    <i data-lucide="x"></i>
+                                </button>
+                            </div>
+                            <input type="text" id="purchaseModalCategory3New" placeholder="Nhập danh mục cấp 3 mới" hidden>
+                        </div>
+
+                        <div id="purchaseAddCategory4ButtonWrapper" class="category-add-wrapper category-add-wrapper--nested" hidden>
+                            <button type="button" id="purchaseAddCategory4Btn" class="category-add-link">
+                                + Thêm phân loại cấp 4 (tuỳ chọn)
+                            </button>
+                        </div>
+
+                        <div id="purchaseCategoryLevel4Section" class="category-level-section category-level-section--nested" hidden>
+                            <div class="product-modal-field category-choice-field">
+                                <span>Phân loại cấp 4 <span class="modal-field-badge">tuỳ chọn</span></span>
+                                <div class="category-level-control">
+                                    <select id="purchaseModalCategory4Select"></select>
+                                    <button type="button" class="category-remove-level" data-purchase-category-remove="4" aria-label="Xóa phân loại cấp 4">
+                                        <i data-lucide="x"></i>
+                                    </button>
+                                </div>
+                                <input type="text" id="purchaseModalCategory4New" placeholder="Nhập danh mục cấp 4 mới" hidden>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p class="product-modal-error" id="purchaseProductModalError" hidden></p>
+        <div class="product-modal-actions">
+            <button type="button" class="secondary-action" id="cancelPurchaseProductModal">Huỷ</button>
+            <button type="button" id="savePurchaseProductModal">Dùng sản phẩm này</button>
+        </div>
+    </div>
+</div>
+
+{{ category_tree|json_script:"expenseCategoryTreeData" }}
+{{ product_options|json_script:"expenseProductNameData" }}
+
+<script>
+(function () {
+    const form               = document.getElementById('expenseForm');
+    const modeInput          = document.getElementById('expenseMode');
+    const modeButtons        = document.querySelectorAll('.expense-mode-btn');
+    const sections           = document.querySelectorAll('.expense-mode-section');
+    const footerTotal        = document.getElementById('expenseFooterTotal');
+    const purchaseItems      = document.getElementById('purchaseItems');
+    const purchaseTemplate   = document.getElementById('purchaseItemTemplate');
+    const purchaseCount      = document.getElementById('purchaseItemCount');
+    const otherItems         = document.getElementById('otherExpenseItems');
+    const otherTemplate      = document.getElementById('otherExpenseTemplate');
+    const otherCount         = document.getElementById('otherExpenseCount');
+
+    // Payment refs — purchase
+    const purchasePaymentMethod   = document.getElementById('purchasePaymentMethod');
+    const purchaseDebtField       = document.getElementById('purchaseDebtField');
+    const purchasePaymentDueDate  = document.getElementById('purchasePaymentDueDate');
+
+    // Payment refs — other
+    const otherPaymentMethod   = document.getElementById('otherPaymentMethod');
+    const otherDebtField       = document.getElementById('otherDebtField');
+    const otherPaymentDueDate  = document.getElementById('otherPaymentDueDate');
+
+    // Modal refs
+    const productModal           = document.getElementById('purchaseProductModal');
+    const productModalError      = document.getElementById('purchaseProductModalError');
+    const modalProductName       = document.getElementById('purchaseModalProductName');
+    const modalProductUnit       = document.getElementById('purchaseModalProductUnit');
+    const modalProductAlert      = document.getElementById('purchaseModalProductAlert');
+    const modalProductSellPrice  = document.getElementById('purchaseModalProductSellPrice');
+    const purchaseCategoryControls = [1, 2, 3, 4].map(level => ({
+        select: document.getElementById(`purchaseModalCategory${level}Select`),
+        input: document.getElementById(`purchaseModalCategory${level}New`)
+    }));
+
+    const categoryTree = JSON.parse(document.getElementById('expenseCategoryTreeData').textContent || '{}');
+    let activeProductRow = null;
+
+    // ── Helpers ────────────────────────────────────────────────────────────
+
+    function parseMoney(value) {
+        return Number(String(value || '').replace(/[^\d]/g, '') || 0);
+    }
+
+    function formatVnd(value) {
+        return `${Math.round(value || 0).toLocaleString('vi-VN')} VND`;
+    }
+
+    function formatMoneyInput(input) {
+        const value = parseMoney(input.value);
+        input.value = value ? value.toLocaleString('vi-VN') : '';
+    }
+
+    function getCookie(name) {
+        for (const cookie of document.cookie.split(';').map(c => c.trim())) {
+            const [key, value] = cookie.split('=');
+            if (key === name) return decodeURIComponent(value || '');
+        }
+        return '';
+    }
+
+    function showProductToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'pixiu-toast';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        window.setTimeout(() => toast.remove(), 4000);
+    }
+
+    // ── Debt field sync — dùng chung cho cả 2 section ──────────────────────
+
+    function syncOneDebtField(paymentEl, debtFieldEl, dueDateEl, isActiveSection) {
+        if (!paymentEl || !debtFieldEl || !dueDateEl) return;
+        const isDebt = paymentEl.value === 'debt';
+        const today = new Date().toISOString().slice(0, 10);
+        dueDateEl.min = today;
+        debtFieldEl.classList.toggle('is-disabled', !isDebt);
+        dueDateEl.disabled = !isActiveSection || !isDebt;
+        dueDateEl.required = isActiveSection && isDebt;
+        if (isActiveSection && isDebt && !dueDateEl.value) dueDateEl.value = today;
+        if (!isDebt) dueDateEl.value = '';
+    }
+
+    function syncDebtFields() {
+        const mode = modeInput.value;
+        syncOneDebtField(purchasePaymentMethod, purchaseDebtField, purchasePaymentDueDate, mode === 'purchase');
+        syncOneDebtField(otherPaymentMethod,    otherDebtField,    otherPaymentDueDate,    mode === 'other');
+    }
+
+    // ── Section mode ───────────────────────────────────────────────────────
+
+    function setSectionDisabled(section, disabled) {
+        section.querySelectorAll('input, select, textarea, button').forEach(el => {
+            if (el.classList.contains('expense-mode-btn')) return;
+            el.disabled = disabled;
+        });
+    }
+
+    function setMode(mode) {
+        modeInput.value = mode;
+        modeButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.mode === mode));
+        sections.forEach(section => {
+            const active = section.dataset.section === mode;
+            section.classList.toggle('active', active);
+            setSectionDisabled(section, !active);
+        });
+        syncDebtFields();
+        updateTotals();
+    }
+
+    // ── Totals ─────────────────────────────────────────────────────────────
+
+    function updatePurchaseTotals() {
+        let total = 0;
+        const rows = purchaseItems.querySelectorAll('.expense-purchase-row');
+        rows.forEach((row, index) => {
+            const indexEl = row.querySelector('.sale-item-index');
+            if (indexEl) indexEl.textContent = index + 1;
+            const unitPrice = parseMoney(row.querySelector('.purchase-unit-price').value);
+            const quantity  = Number(row.querySelector('.purchase-quantity').value || 0);
+            const rowTotal  = unitPrice * quantity;
+            row.querySelector('.purchase-row-total').value = Math.round(rowTotal).toLocaleString('vi-VN');
+            total += rowTotal;
+        });
+        purchaseCount.textContent = `Đang nhập ${String(rows.length).padStart(2, '0')} mục`;
+        return total;
+    }
+
+    function updateOtherTotals() {
+        let total = 0;
+        const rows = otherItems.querySelectorAll('.expense-other-row');
+        const allEquipment = rows.length > 0 && Array.from(rows).every(row => row.querySelector('.other-expense-type')?.value === 'equipment');
+        const noteHead = document.getElementById('expenseNoteHead');
+        const lifetimeHead = document.getElementById('equipmentLifetimeHead');
+        if (noteHead) noteHead.textContent = allEquipment ? 'Tên thiết bị' : 'Ghi chú';
+        if (lifetimeHead) {
+            lifetimeHead.childNodes[0].nodeValue = allEquipment ? 'Vòng đời (tháng)' : 'Thời gian sử dụng (tháng)';
+        }
+        rows.forEach((row, index) => {
+            const indexEl = row.querySelector('.sale-item-index');
+            if (indexEl) indexEl.textContent = index + 1;
+            total += parseMoney(row.querySelector('.other-expense-amount').value);
+        });
+        otherCount.textContent = `Đang nhập ${String(rows.length).padStart(2, '0')} mục`;
+        return total;
+    }
+
+    function updateTotals() {
+        const total = modeInput.value === 'purchase' ? updatePurchaseTotals() : updateOtherTotals();
+        footerTotal.textContent = formatVnd(total);
+    }
+
+    // ── Row binding ────────────────────────────────────────────────────────
+
+    function bindPurchaseRow(row) {
+        const product        = row.querySelector('.purchase-product');
+        const newProductName = row.querySelector('.purchase-new-product-name');
+        const price          = row.querySelector('.purchase-unit-price');
+        const quantity       = row.querySelector('.purchase-quantity');
+        const remove         = row.querySelector('.sale-remove-row');
+
+        function syncNewProductInput() {
+            const isNew = product.value === '__new__';
+            newProductName.classList.toggle('is-visible', isNew);
+            newProductName.disabled = !isNew;
+            if (!isNew) newProductName.value = '';
+        }
+
+        product.addEventListener('change', () => {
+            const selected = product.selectedOptions[0];
+            const productPrice = selected ? selected.dataset.price : '';
+            if (product.value !== '__new__' && productPrice) {
+                price.value = productPrice;
+                formatMoneyInput(price);
+            }
+            syncNewProductInput();
+            if (product.value === '__new__') openProductModal(row);
+            updateTotals();
+        });
+        price.addEventListener('input', () => { formatMoneyInput(price); updateTotals(); });
+        quantity.addEventListener('input', updateTotals);
+        remove.addEventListener('click', () => {
+            if (purchaseItems.querySelectorAll('.expense-purchase-row').length > 1) {
+                row.remove();
+                updateTotals();
+            }
+        });
+        syncNewProductInput();
+        if (product.value && product.value !== '__new__' && product.selectedOptions[0]?.dataset.price && !price.value) {
+            price.value = product.selectedOptions[0].dataset.price;
+            formatMoneyInput(price);
+        }
+    }
+
+    function bindOtherRow(row) {
+        const amount = row.querySelector('.other-expense-amount');
+        const type = row.querySelector('.other-expense-type');
+        const lifetimeField = row.querySelector('.equipment-lifetime-field');
+        const lifetimeInput = row.querySelector('.equipment-lifetime-input');
+        const noteInput = row.querySelector('.other-expense-note');
+        const equipmentMemo = row.querySelector('.equipment-note-row');
+        const remove = row.querySelector('.sale-remove-row');
+
+        function syncEquipmentLifetime() {
+            const isEquipment = type.value === 'equipment';
+            row.classList.toggle('has-equipment-lifetime', isEquipment);
+            lifetimeInput.required = isEquipment;
+            lifetimeInput.placeholder = isEquipment ? 'Vòng đời (tháng)' : 'Sử dụng (tháng)';
+            lifetimeInput.setAttribute('aria-label', isEquipment ? 'Vòng đời thiết bị theo tháng' : 'Thời gian sử dụng theo tháng');
+            noteInput.placeholder = isEquipment ? 'Tên thiết bị' : 'Ghi chú';
+            noteInput.title = isEquipment ? 'Nhập tên thiết bị để theo dõi ở tab Thiết bị.' : '';
+            noteInput.required = isEquipment;
+            if (equipmentMemo) {
+                equipmentMemo.disabled = !isEquipment;
+                if (!isEquipment) {
+                    equipmentMemo.value = '';
+                }
+            }
+        }
+
+        amount.addEventListener('input', () => { formatMoneyInput(amount); updateTotals(); });
+        type.addEventListener('change', () => {
+            syncEquipmentLifetime();
+            updateTotals();
+        });
+        lifetimeInput.addEventListener('input', updateTotals);
+        noteInput.addEventListener('input', updateTotals);
+        if (equipmentMemo) equipmentMemo.addEventListener('input', updateTotals);
+        remove.addEventListener('click', () => {
+            if (otherItems.querySelectorAll('.expense-other-row').length > 1) {
+                row.remove();
+                updateTotals();
+            }
+        });
+        syncEquipmentLifetime();
+    }
+
+    // ── Add rows ───────────────────────────────────────────────────────────
+
+    document.getElementById('addPurchaseItem').addEventListener('click', () => {
+        const row = purchaseTemplate.content.firstElementChild.cloneNode(true);
+        purchaseItems.appendChild(row);
+        bindPurchaseRow(row);
+        lucide.createIcons();
+        updateTotals();
+    });
+
+    document.getElementById('addOtherExpense').addEventListener('click', () => {
+        const row = otherTemplate.content.firstElementChild.cloneNode(true);
+        otherItems.appendChild(row);
+        bindOtherRow(row);
+        lucide.createIcons();
+        updateTotals();
+    });
+
+    // ── Product modal ───────────────────────────────────────────────────────
+
+    const purchaseVisibleCategoryLevels = { 2: false, 3: false, 4: false };
+
+    function purchaseSelectedCategory(level) {
+        const control = purchaseCategoryControls[level - 1];
+        return control.input.hidden ? control.select.value.trim() : control.input.value.trim();
+    }
+
+    function purchaseFillCategorySelect(select, options, placeholder) {
+        select.innerHTML = '';
+        const emptyOption = document.createElement('option');
+        emptyOption.value = '';
+        emptyOption.textContent = placeholder;
+        emptyOption.disabled = true;
+        emptyOption.hidden = true;
+        select.appendChild(emptyOption);
+
+        const newOption = document.createElement('option');
+        newOption.value = '__new__';
+        newOption.textContent = '+ Tạo danh mục mới...';
+        select.appendChild(newOption);
+
+        if (options.length) {
+            const divider = document.createElement('option');
+            divider.value = '';
+            divider.textContent = '── Danh mục có sẵn ──';
+            divider.disabled = true;
+            select.appendChild(divider);
+            options.forEach(option => {
+                const item = document.createElement('option');
+                item.value = option;
+                item.textContent = option;
+                select.appendChild(item);
+            });
+        }
+    }
+
+    function purchaseCategoryOptionsForLevel(level) {
+        if (level === 1) return Object.keys(categoryTree).sort();
+        const level1 = purchaseSelectedCategory(1);
+        if (!level1 || !categoryTree[level1]) return [];
+        if (level === 2) return Object.keys(categoryTree[level1]).sort();
+        const level2 = purchaseSelectedCategory(2);
+        if (!level2 || !categoryTree[level1][level2]) return [];
+        if (level === 3) return Object.keys(categoryTree[level1][level2]).sort();
+        const level3 = purchaseSelectedCategory(3);
+        if (!level3 || !categoryTree[level1][level2][level3]) return [];
+        return [...categoryTree[level1][level2][level3]].sort();
+    }
+
+    function purchaseAddCategoryValue(level, value) {
+        const name = String(value || '').trim();
+        if (!name) return '';
+        if (level === 1) {
+            categoryTree[name] = categoryTree[name] || {};
+            return name;
+        }
+        const level1 = purchaseSelectedCategory(1);
+        if (!level1) return '';
+        categoryTree[level1] = categoryTree[level1] || {};
+        if (level === 2) {
+            categoryTree[level1][name] = categoryTree[level1][name] || {};
+            return name;
+        }
+        const level2 = purchaseSelectedCategory(2);
+        if (!level2) return '';
+        categoryTree[level1][level2] = categoryTree[level1][level2] || {};
+        if (level === 3) {
+            categoryTree[level1][level2][name] = categoryTree[level1][level2][name] || [];
+            return name;
+        }
+        const level3 = purchaseSelectedCategory(3);
+        if (!level3) return '';
+        categoryTree[level1][level2][level3] = categoryTree[level1][level2][level3] || [];
+        if (!categoryTree[level1][level2][level3].includes(name)) {
+            categoryTree[level1][level2][level3].push(name);
+        }
+        return name;
+    }
+
+    function purchaseClearCategoryFrom(level) {
+        for (let current = level; current <= 4; current += 1) {
+            const control = purchaseCategoryControls[current - 1];
+            control.select.value = '';
+            control.input.value = '';
+            control.input.hidden = true;
+            if (current > 1) purchaseVisibleCategoryLevels[current] = false;
+        }
+    }
+
+    function purchaseRefreshCategorySelects(fromLevel = 1) {
+        for (let level = fromLevel; level <= 4; level += 1) {
+            const control = purchaseCategoryControls[level - 1];
+            const current = purchaseSelectedCategory(level);
+            const options = purchaseCategoryOptionsForLevel(level);
+            const placeholder = `Chọn danh mục cấp ${level}`;
+            purchaseFillCategorySelect(control.select, options, placeholder);
+            if (current && !options.includes(current)) {
+                purchaseAddCategoryValue(level, current);
+            }
+            const refreshedOptions = purchaseCategoryOptionsForLevel(level);
+            purchaseFillCategorySelect(control.select, refreshedOptions, placeholder);
+            control.select.value = refreshedOptions.includes(current) ? current : '';
+            control.input.hidden = true;
+            control.input.value = '';
+        }
+        purchaseUpdateCategoryVisibility();
+    }
+
+    function purchaseUpdateCategoryVisibility() {
+        const cat1Value = purchaseSelectedCategory(1);
+        const cat2Value = purchaseSelectedCategory(2);
+        const cat3Value = purchaseSelectedCategory(3);
+        document.getElementById('purchaseCategoryLevel2Section').hidden = !purchaseVisibleCategoryLevels[2];
+        document.getElementById('purchaseCategoryLevel3Section').hidden = !purchaseVisibleCategoryLevels[3];
+        document.getElementById('purchaseCategoryLevel4Section').hidden = !purchaseVisibleCategoryLevels[4];
+        document.getElementById('purchaseAddCategory2ButtonWrapper').hidden = !cat1Value || purchaseVisibleCategoryLevels[2];
+        document.getElementById('purchaseAddCategory3ButtonWrapper').hidden = !purchaseVisibleCategoryLevels[2] || !cat2Value || purchaseVisibleCategoryLevels[3];
+        document.getElementById('purchaseAddCategory4ButtonWrapper').hidden = !purchaseVisibleCategoryLevels[3] || !cat3Value || purchaseVisibleCategoryLevels[4];
+        const removeLevel1 = document.querySelector('[data-purchase-category-remove="1"]');
+        if (removeLevel1) removeLevel1.hidden = !cat1Value;
+    }
+
+    function purchaseSetCategoryLevel(level, value) {
+        const control = purchaseCategoryControls[level - 1];
+        const cleanValue = String(value || '').trim();
+        if (cleanValue) purchaseAddCategoryValue(level, cleanValue);
+        purchaseRefreshCategorySelects(level);
+        control.select.value = cleanValue;
+        control.input.hidden = true;
+        control.input.value = '';
+    }
+
+    function purchaseAddVisibleCategoryLevel(level) {
+        purchaseVisibleCategoryLevels[level] = true;
+        purchaseRefreshCategorySelects(level);
+        purchaseUpdateCategoryVisibility();
+        purchaseCategoryControls[level - 1].select.focus();
+    }
+
+    function purchaseRemoveCategoryLevel(level) {
+        purchaseClearCategoryFrom(level);
+        purchaseRefreshCategorySelects(level);
+        purchaseUpdateCategoryVisibility();
+        purchaseCategoryControls[Math.max(1, level - 1) - 1].select.focus();
+    }
+
+    function appendProductOption(productId, productName) {
+        document.querySelectorAll('.purchase-product').forEach(select => {
+            if (![...select.options].some(opt => String(opt.value) === String(productId))) {
+                const opt = document.createElement('option');
+                opt.value = productId;
+                opt.textContent = productName;
+                const newOpt = [...select.options].find(o => o.value === '__new__');
+                select.insertBefore(opt, newOpt || null);
+            }
+        });
+    }
+
+    function openProductModal(row) {
+        activeProductRow = row;
+        modalProductName.value = row.querySelector('.purchase-new-product-name').value || '';
+        modalProductUnit.value = 'cái';
+        modalProductAlert.value = '10';
+        modalProductSellPrice.value = '';
+        purchaseCategoryControls.forEach(control => {
+            control.select.value = '';
+            control.input.value = '';
+            control.input.hidden = true;
+        });
+        purchaseVisibleCategoryLevels[2] = false;
+        purchaseVisibleCategoryLevels[3] = false;
+        purchaseVisibleCategoryLevels[4] = false;
+        purchaseRefreshCategorySelects(1);
+        purchaseUpdateCategoryVisibility();
+        productModalError.hidden = true;
+        productModal.hidden = false;
+        modalProductName.focus();
+    }
+
+    function closeProductModal() {
+        productModal.hidden = true;
+        activeProductRow = null;
+    }
+
+    async function saveProductModal() {
+        if (!activeProductRow) return;
+        const productName = modalProductName.value.trim();
+        const category1   = purchaseSelectedCategory(1);
+        const productSellPrice = parseMoney(modalProductSellPrice.value);
+        if (!productName || !category1) {
+            productModalError.textContent = 'Nhập tên sản phẩm và danh mục cấp 1 trước khi tiếp tục.';
+            productModalError.hidden = false;
+            return;
+        }
+        if (productSellPrice <= 0) {
+            productModalError.textContent = 'Nhập giá bán mặc định lớn hơn 0 cho sản phẩm mới.';
+            productModalError.hidden = false;
+            return;
+        }
+        const formData = new FormData();
+        formData.append('name', productName);
+        formData.append('unit', modalProductUnit.value.trim() || 'cái');
+        formData.append('alert_threshold', modalProductAlert.value || '10');
+        formData.append('price_sell', productSellPrice);
+        formData.append('category_level_1', category1);
+        formData.append('category_level_2', purchaseSelectedCategory(2));
+        formData.append('category_level_3', purchaseSelectedCategory(3));
+        formData.append('category_level_4', purchaseSelectedCategory(4));
+
+        const response = await fetch('/expenses/create/ajax-new-product/', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+            body: formData,
+        });
+        const result = await response.json();
+        if (!response.ok || !result.ok) {
+            productModalError.textContent = result.error || 'Không thể lưu sản phẩm mới.';
+            productModalError.hidden = false;
+            return;
+        }
+        appendProductOption(result.product_id, result.product_name || productName);
+        const select = activeProductRow.querySelector('.purchase-product');
+        select.value = result.product_id;
+        const nameInput = activeProductRow.querySelector('.purchase-new-product-name');
+        nameInput.value = '';
+        nameInput.classList.remove('is-visible');
+        nameInput.disabled = true;
+        closeProductModal();
+        showProductToast(result.message);
+        updateTotals();
+    }
+
+    // ── Event listeners ────────────────────────────────────────────────────
+
+    modeButtons.forEach(btn => btn.addEventListener('click', () => setMode(btn.dataset.mode)));
+    purchasePaymentMethod?.addEventListener('change', syncDebtFields);
+    otherPaymentMethod?.addEventListener('change', syncDebtFields);
+
+    purchaseRefreshCategorySelects(1);
+    purchaseCategoryControls.forEach((control, index) => {
+        const level = index + 1;
+        control.select.addEventListener('change', () => {
+            if (control.select.value === '__new__') {
+                control.input.hidden = false;
+                control.input.value = '';
+                control.input.focus();
+                return;
+            }
+            purchaseClearCategoryFrom(level + 1);
+            purchaseRefreshCategorySelects(level + 1);
+        });
+        control.input.addEventListener('blur', () => {
+            const value = control.input.value.trim();
+            if (!value) return;
+            purchaseSetCategoryLevel(level, value);
+        });
+        control.input.addEventListener('keydown', event => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const value = control.input.value.trim();
+                if (value) purchaseSetCategoryLevel(level, value);
+            }
+            if (event.key === 'Escape') {
+                control.input.value = '';
+                control.input.hidden = true;
+                control.select.value = '';
+                control.select.focus();
+            }
+        });
+    });
+    document.getElementById('purchaseAddCategory2Btn').addEventListener('click', () => purchaseAddVisibleCategoryLevel(2));
+    document.getElementById('purchaseAddCategory3Btn').addEventListener('click', () => purchaseAddVisibleCategoryLevel(3));
+    document.getElementById('purchaseAddCategory4Btn').addEventListener('click', () => purchaseAddVisibleCategoryLevel(4));
+    document.querySelectorAll('[data-purchase-category-remove]').forEach(button => {
+        button.addEventListener('click', () => purchaseRemoveCategoryLevel(Number(button.dataset.purchaseCategoryRemove)));
+    });
+    document.getElementById('closePurchaseProductModal').addEventListener('click', closeProductModal);
+    document.getElementById('cancelPurchaseProductModal').addEventListener('click', closeProductModal);
+    document.getElementById('savePurchaseProductModal').addEventListener('click', saveProductModal);
+    modalProductSellPrice.addEventListener('input', () => formatMoneyInput(modalProductSellPrice));
+    productModal.addEventListener('click', e => { if (e.target === productModal) closeProductModal(); });
+
+    // ── Init ────────────────────────────────────────────────────────────────
+
+    purchaseItems.querySelectorAll('.expense-purchase-row').forEach(bindPurchaseRow);
+    purchaseItems.querySelectorAll('.purchase-unit-price').forEach(formatMoneyInput);
+    otherItems.querySelectorAll('.expense-other-row').forEach(bindOtherRow);
+    otherItems.querySelectorAll('.other-expense-amount').forEach(formatMoneyInput);
+
+    // Strip format trước khi submit
+    form.addEventListener('submit', () => {
+        purchaseItems.querySelectorAll('.purchase-unit-price').forEach(input => {
+            input.value = parseMoney(input.value);
+        });
+        otherItems.querySelectorAll('.other-expense-amount').forEach(input => {
+            input.value = parseMoney(input.value);
+        });
+    });
+
+    setMode(modeInput.value || 'purchase');
+    syncDebtFields();
+})();
+</script>
+{% endblock %}

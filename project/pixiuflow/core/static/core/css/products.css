@@ -1,0 +1,307 @@
+﻿.product-create-page {
+    background: #f8f9fb;
+    min-height: 100vh;
+}
+
+.product-create-content {
+    padding: 32px 30px 80px;
+    width: 100%;
+    max-width: none;
+}
+
+.product-form-card {
+    background: #fff9eb;
+    border: 1.5px solid #ff9800;
+    border-radius: 10px;
+    box-shadow: 0 18px 36px rgba(139, 16, 16, 0.08);
+    overflow: hidden;
+}
+
+.product-form-section {
+    display: grid;
+    grid-template-columns: 300px minmax(0, 1fr);
+    gap: 34px;
+    padding: 30px;
+    border-bottom: 1px solid #e7d9b8;
+}
+
+.product-form-section h2 {
+    margin: 0 0 8px;
+    color: var(--red);
+    font-size: 24px;
+    font-weight: 900;
+}
+
+.product-form-section p {
+    margin: 0;
+    color: #667085;
+    font-size: 15px;
+    line-height: 1.45;
+}
+
+.product-form-grid,
+.initial-stock-box {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+}
+
+.product-field--wide {
+    grid-column: 1 / -1;
+}
+
+.product-field,
+.product-form-section label {
+    display: grid;
+    gap: 8px;
+}
+
+.product-field span,
+.product-form-section label span {
+    color: #344054;
+    font-size: 13px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.product-form-card input,
+.product-form-card select {
+    width: 100%;
+    min-height: 48px;
+    border: 1.5px solid #d7deea;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #172033;
+    padding: 0 14px;
+    font: inherit;
+    font-size: 16px;
+}
+
+.product-form-card input:focus,
+.product-form-card select:focus {
+    outline: none;
+    border-color: #ff9800;
+    box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.14);
+}
+
+.category-builder {
+    display: grid;
+    gap: 14px;
+}
+
+.product-form-section .sku-preview {
+    margin: -6px 0 0;
+    color: var(--color-text-muted, #9a6a3a);
+    font-size: 12px;
+}
+
+.product-form-section .sku-preview strong {
+    color: var(--color-primary, #7a1a00);
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-weight: 700;
+}
+
+.category-level-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(280px, 1fr)) auto;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid #eadbb7;
+    border-radius: 8px;
+    background: rgba(255, 246, 218, 0.62);
+}
+
+.category-level-row[hidden] {
+    display: none;
+}
+
+.category-level-actions {
+    display: flex;
+    align-self: end;
+    gap: 8px;
+}
+
+.category-level-add,
+.category-level-remove {
+    width: 48px;
+    height: 48px;
+    border: 1.5px solid #e3d5bc;
+    border-radius: 8px;
+    background: #fffdf6;
+    color: var(--red);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.category-level-remove {
+    color: #b42318;
+}
+
+.category-level-add:hover,
+.category-level-remove:hover {
+    border-color: #ff9800;
+    background: #fff4d8;
+}
+
+.initial-stock-box {
+    padding: 18px;
+    border: 1px dashed #ff9800;
+    border-radius: 10px;
+    background: #fff6da;
+}
+
+.stock-origin-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(280px, 1fr));
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.stock-origin-card {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+    padding: 16px;
+    border: 1px solid #eadbb7;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.72);
+    cursor: pointer;
+}
+
+.stock-origin-card:has(input:checked) {
+    border-color: #ff9800;
+    background: #fff4d8;
+    box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.12);
+}
+
+.stock-origin-card:has(input:disabled) {
+    display: none;
+}
+
+.stock-origin-card input {
+    width: 18px;
+    min-height: 18px;
+    margin: 2px 0 0;
+    padding: 0;
+}
+
+.stock-origin-card > span {
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    text-transform: none;
+}
+
+.stock-origin-card strong {
+    display: block;
+    color: #172033;
+    font-size: 15px;
+    font-weight: 900;
+    margin-bottom: 4px;
+}
+
+.stock-origin-card small {
+    color: #667085;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.initial-stock-box [hidden] {
+    display: none;
+}
+
+.initial-stock-box[hidden] {
+    display: none;
+}
+
+.product-purchase-link,
+.inline-add-product-link {
+    margin-top: 14px;
+    min-height: 42px;
+    border: 1px dashed #ff9800;
+    border-radius: 8px;
+    color: var(--red);
+    background: rgba(255, 255, 255, 0.58);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 14px;
+    text-decoration: none;
+    font-weight: 900;
+}
+
+.inline-add-product-link {
+    width: 100%;
+}
+
+.product-form-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 14px;
+    padding: 22px 30px;
+    background: #fff6da;
+}
+
+.product-form-footer button {
+    min-width: 180px;
+    min-height: 48px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--red);
+    color: #ffffff;
+    font: inherit;
+    font-weight: 900;
+    box-shadow: 0 4px 12px rgba(139, 16, 16, 0.22);
+}
+
+.product-form-footer .secondary-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 180px;
+    min-height: 48px;
+    border: 1.5px solid var(--red);
+    border-radius: 8px;
+    background: #ffffff;
+    color: var(--red);
+    font: inherit;
+    font-weight: 900;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.product-form-footer .secondary-action:hover {
+    background: #fff6da;
+    box-shadow: 0 2px 8px rgba(139, 16, 16, 0.12);
+}
+
+@media (max-width: 1100px) {
+    .product-create-content {
+        padding: 24px 18px 72px;
+    }
+
+    .product-form-section {
+        grid-template-columns: 1fr;
+    }
+
+    .category-level-row,
+    .stock-origin-options {
+        grid-template-columns: 1fr;
+    }
+
+    .category-level-actions {
+        width: 100%;
+    }
+
+    .category-level-add,
+    .category-level-remove {
+        flex: 1;
+        width: 100%;
+    }
+}
