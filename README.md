@@ -5,7 +5,7 @@
 | Trường | Nội dung |
 |--------|----------|
 | Lớp | CTTTTC - K62 |
-| Mã nhóm | G02 |
+| Nhóm | G02 |
 | Giảng viên | Phan Tran Trung Dzung, Assoc. Prof., Dr. |
 
 ## Thành viên
