@@ -1,52 +1,102 @@
-# Pixiu Flow
+# 🌟 Pixiu Flow - Nền tảng Quản lý Tài chính Doanh nghiệp Thông minh
 
-## Thông tin nhóm
+Chào mừng bạn đến với mã nguồn của **Pixiu Flow**! Tài liệu này được biên soạn nhằm giúp các lập trình viên, giảng viên hoặc bất kỳ ai tiếp quản dự án có thể nắm bắt toàn diện **luồng logic (Logic Flow)**, **cấu trúc thiết kế (Design)** và **các thành phần mã nguồn (Codebase)** của toàn bộ website.
 
-| Trường | Nội dung |
-|--------|----------|
-| Lớp | CTTTTC - K62 |
-| Mã nhóm | G02 |
-| Giảng viên | Phan Tran Trung Dzung, Assoc. Prof., Dr. |
+---
 
-## Thành viên
+## 1. Tổng quan Hệ thống (Overview)
+**Pixiu Flow** là một ứng dụng Web Application được thiết kế dành riêng cho các chủ doanh nghiệp nhỏ/cửa hàng. Hệ thống giúp theo dõi dòng tiền (Cashflow), ghi nhận giao dịch (Doanh thu & Chi phí), quản lý hàng tồn kho (Inventory) và cung cấp các báo cáo phân tích chuyên sâu (Analytics).
 
-| Họ tên | Mã sinh viên | Vai trò chính |
-|--------|--------------|---------------|
-| Đặng Như Ngọc Thạch | 2312380032 | Fullstack Developer |
-| Nguyễn Thanh Ngân | 2312380021 | Nghiên cứu dữ liệu, người dùng và logic tài chính |
-| Kiều Xuân Thuỷ | 2311380703 |  UI/UX Designer |
-| Nguyễn Bảo Ngọc | 2313380022 | UI/UX Designer |
-| Vũ Đức Anh | 2312380806 | Nghiên cứu người dùng và logic tài chính |
+**Công nghệ sử dụng (Tech Stack):**
+- **Backend:** Python, Django Framework.
+- **Frontend:** HTML5, CSS3 thuần (Vanilla CSS), JavaScript (Vanilla JS).
+- **Cơ sở dữ liệu:** SQLite (hoặc PostgreSQL tùy môi trường triển khai).
+- **Kiến trúc:** MVT (Model - View - Template) đặc trưng của Django.
 
-## Mô tả sản phẩm
+---
 
-Pixiu Flow là ứng dụng web quản lý tài chính dành cho chủ kinh doanh nhỏ và người bán hàng cá nhân — những người thường theo dõi thu chi bằng trực giác hoặc ghi chép thủ công mà không có công cụ hỗ trợ rõ ràng. Sản phẩm giúp ghi nhận giao dịch, quản lý sản phẩm và tồn kho, doanh thu và chi phí trên một hệ thống thống nhất. Pixiu Flow được thiết kế để người không có kiến thức tài chính vẫn hiểu được mình đang lời hay lỗ, và lỗ ở đâu. Từ đó, người dùng có thể đưa ra quyết định kinh doanh dựa trên số liệu thực tế thay vì cảm tính.
+## 2. Kiến trúc Luồng Code (Code Flow Architecture)
+Hệ thống tuân thủ chặt chẽ kiến trúc MVT, luồng dữ liệu (Data Flow) di chuyển qua các tầng như sau:
 
-## Vấn đề sản phẩm giải quyết
-- **Vấn đề:** Nhiều chủ kinh doanh nhỏ tin rằng mình đang có lời vì bán giá cao hơn giá vốn — nhưng thực tế không tính đến các chi phí phát sinh khác như tiền điện, thuê mặt bằng, hao hụt hàng hóa hay khấu hao thiết bị. Kết quả là họ không biết mình thực sự đang lời hay lỗ, và nếu lỗ thì lỗ ở đâu.
-- **Đối tượng gặp vấn đề:** Chủ shop nhỏ, người bán hàng online, freelancer và hộ kinh doanh cá thể — những người tự quản lý tài chính mà không có kế toán hoặc phần mềm hỗ trợ, thường dùng sổ tay, Excel hoặc ghi nhớ trong đầu.
-- **Vì sao đáng quan tâm:** Không nắm được tình hình tài chính thực tế khiến người kinh doanh khó đưa ra quyết định đúng — không biết nên tăng giá, cắt chi phí hay mở rộng quy mô. Về dài hạn, đây là nguyên nhân phổ biến khiến các mô hình kinh doanh nhỏ thua lỗ âm thầm dù doanh thu trông có vẻ ổn.
+1. **User Request (Trình duyệt):** Người dùng thao tác trên giao diện (click nút, điền form). JavaScript thuần ở phía Client sẽ bắt sự kiện, tính toán tạm thời (như tính tổng tiền, check validate cơ bản) và định dạng giao diện động.
+2. **Routing (`core/urls.py`):** Khi form được Submit hoặc AJAX gọi lên, hệ thống URL của Django sẽ điều hướng Request đến đúng View xử lý.
+3. **Controller/Logic (`core/views.py`):** Chứa toàn bộ logic nghiệp vụ (Business Logic). View sẽ kiểm tra quyền, xác thực form (`core/forms.py`), và gọi các hàm tính toán phức tạp.
+4. **Database/Models (`core/models.py`):** View sẽ tương tác với Models để truy vấn (Query) hoặc thay đổi dữ liệu (Insert/Update) vào cơ sở dữ liệu.
+5. **Render/Response (`core/templates/core/`):** Sau khi xử lý xong, View sẽ đóng gói dữ liệu truyền vào file HTML (Django Template) để kết xuất giao diện hoặc trả về cục bộ JSON (đối với AJAX) cho người dùng.
 
-## Người dùng mục tiêu
+---
 
-- **Người dùng chính:** Chủ kinh doanh nhỏ, freelancer và cá nhân không có bộ phận kế toán riêng.
-- **Tình huống sử dụng:** Ghi nhận giao dịch hằng ngày, kiểm tra tồn kho, theo dõi hiệu quả kinh doanh, xem báo cáo trước khi đưa ra quyết định.
+## 3. Luồng Nghiệp vụ Cụ thể (Business Logic Flow)
+Dưới đây là các luồng vận hành chính của hệ thống Pixiu Flow:
 
-## Tính năng chính
+### A. Luồng Đăng nhập & Thiết lập ban đầu (Onboarding)
+- **Flow:** `Landing Page` ➔ `Đăng ký/Đăng nhập` ➔ `Thiết lập Cửa hàng` ➔ `Khai báo Tồn kho đầu kỳ`.
+- **Logic:** Khi tài khoản mới được tạo, hệ thống yêu cầu thiết lập thông tin cơ bản. Dữ liệu "Tồn kho đầu kỳ" sẽ tạo ra các bản ghi Stock ban đầu trong Database làm cơ sở cho mọi tính toán xuất/nhập sau này.
 
-1. Ghi nhận giao dịch doanh thu, nhập hàng và chi phí theo từng giao dịch hoặc nhiều giao dịch cùng lúc.
-2. Quản lý sản phẩm, danh mục, tồn kho ban đầu, giá vốn, ngưỡng cảnh báo và tình trạng hàng hóa.
-3. Theo dõi lịch sử giao dịch, công nợ khách hàng, khoản cần thanh toán và hạn thanh toán.
-4. Cung cấp dashboard tổng quan về doanh thu, lợi nhuận, tiền đã thu, tiền đã chi và dòng tiền thuần.
-5. Phân tích doanh thu, lợi nhuận, cơ cấu chi phí và dòng tiền bằng KPI, bảng so sánh và biểu đồ trực quan.
+### B. Luồng Ghi nhận Giao dịch (Doanh thu & Chi phí)
+- **Flow:** `Chọn loại Giao dịch` ➔ `Điền Form (Sản phẩm, Số lượng, Đơn giá)` ➔ `Lưu Database` ➔ `Cập nhật Công nợ/Tồn kho` ➔ `Ghi nhận Lịch sử`.
+- **Logic tinh gọn (Frontend):** Javascript xử lý tự động tính Thành tiền = Số lượng * Đơn giá. Nếu người dùng muốn tạo Sản phẩm mới trong lúc nhập giao dịch ➔ Bật Modal ➔ Dùng **AJAX (`fetch API`)** gửi ngầm lên Backend ➔ Backend tạo Product ➔ Trả về ID ➔ JS tự động nhét sản phẩm mới vào Dropdown mà không làm mất dữ liệu form đang nhập dở.
+- **Logic Backend:** Khi lưu Chi phí Nhập hàng (Purchase), hệ thống đồng thời sinh ra 1 phiếu Chi tiền và tự động cộng (+) số lượng vào Tồn kho của sản phẩm tương ứng. Tương tự, Doanh thu (Sale) sẽ trừ (-) Tồn kho. Phương thức thanh toán (Tiền mặt / Công nợ) sẽ quyết định ngày đáo hạn.
 
-## Cách chạy sản phẩm
+### C. Luồng Quản lý Tồn kho & Cảnh báo (Inventory)
+- **Logic:** Tồn kho không phải là một con số tĩnh bị gán tay, mà được tính toán động hoặc cập nhật tự động (Trigger) mỗi khi có Giao dịch Mua/Bán xảy ra.
+- Giao diện Inventory sẽ đối chiếu số tồn hiện tại với `alert_threshold` (ngưỡng cảnh báo). Nếu thấp hơn, hệ thống tự đẩy sản phẩm đó lên danh sách "Cần nhập gấp".
 
-1. Truy cập website Pixiu Flow được triển khai công khai trên Railway qua link demo bên dưới.
-2. Chọn **Đăng ký**, tạo tài khoản mới và hoàn thành bước thiết lập thông tin ban đầu.
-3. Khai báo sản phẩm hoặc tồn kho có sẵn nếu cần, sau đó ghi nhận thử doanh thu, nhập hàng và chi phí.
-4. Mở các trang **Bảng theo dõi**, **Sản phẩm & tồn kho**, **Lịch sử giao dịch** và **Phân tích** để xem kết quả demo.
+### D. Luồng Phân tích & Báo cáo (Analytics)
+- **Logic:** `views.py` tổng hợp dữ liệu từ các giao dịch trong tháng/năm, gom nhóm (group by) theo từng mảng (Doanh thu, Lợi nhuận, Chi phí theo danh mục).
+- Dữ liệu được đưa về dạng chuỗi JSON `chart_points_json` truyền thẳng vào HTML. JavaScript phía Frontend sẽ đọc chuỗi JSON này và vẽ lên các biểu đồ (Bar, Line, Combo chart) tương ứng.
 
-## Link demo
+---
 
-- **Link demo:** https://pixiuflow-production.up.railway.app/
+## 4. Thiết kế Giao diện (Design & UI/UX)
+Giao diện của Pixiu Flow được xây dựng dựa trên bản thiết kế Figma với các nguyên tắc nghiêm ngặt:
+- **Không sử dụng Framework CSS (No Bootstrap/Tailwind):** Toàn bộ giao diện được tôi "cắt" từ Figma bằng CSS thuần (Vanilla CSS) để kiểm soát tuyệt đối từng pixel, margin, padding, đảm bảo đúng 100% thiết kế gốc.
+- **Cấu trúc File CSS:** Được chia nhỏ theo tính năng (ví dụ: `dashboard.css`, `transactions.css`, `analytics.css`) và quy về một mối quản lý Responsive qua `responsive.css`.
+- **Grid/Flexbox Layout:** Hệ thống sử dụng CSS Grid đa chiều làm xương sống. Giao diện có khả năng tự động "chảy" (reflow) mượt mà từ màn hình máy tính lớn (1920px), Tablet (1024px) xuống đến giao diện Mobile (760px) mà không bị vỡ layout.
+
+---
+
+## 5. Vai trò và Những phần tôi đã Code (Developer's Contributions)
+Trong dự án này, với vai trò **Fullstack Developer**, đầu vào của tôi là bộ Figma (Giao diện) và luồng mô tả tính năng từ các thành viên. Từ đó, **tôi đã tự tay lập trình toàn bộ hệ thống từ Frontend tới Backend**:
+
+### Phần Frontend (Giao diện & Tương tác)
+1. **Xây dựng toàn bộ HTML/CSS:** Viết code HTML chuẩn Semantic và toàn bộ các file CSS (`base.css`, `transactions.css`, `history.css`, `responsive.css`...) cấu thành nên giao diện hiện đại của hệ thống.
+2. **Lập trình JavaScript (Client-side):** 
+   - Viết các logic ẩn/hiện động các trường thông tin (VD: Chọn "Thiết bị" sẽ hiện ô nhập "Khấu hao tháng").
+   - Viết logic gộp/chèn hàng loạt (Bulk Create) bằng JS để người dùng nhập nhiều giao dịch như đang xài Excel.
+   - Quản lý logic điều hướng tab (`data-main-tab`, `data-profit-tabs`) trong màn hình Report mà không cần load lại trang.
+
+### Phần Backend (Logic Server)
+1. **Thiết kế Database Models (`core/models.py`):** Lập trình các Model như `Transaction`, `Expense`, `Product`, `Category`, định nghĩa các mối quan hệ (Foreign Key) và quy tắc cơ sở dữ liệu.
+2. **Xây dựng Business Logic (`core/views.py`):** 
+   - Viết các View xử lý lưu dữ liệu, bắt lỗi Form (`core/forms.py`).
+   - Xây dựng luồng logic tính toán lợi nhuận, doanh thu, dòng tiền theo các bộ lọc thời gian (Start Date / End Date).
+3. **Phát triển API tĩnh:** Cung cấp các AJAX endpoint (như luồng tạo nhanh Product khi đang nhập Expense) để kết nối đồng bộ giữa Backend và JS phía Frontend.
+
+---
+
+## 6. Hướng dẫn Cài đặt & Khởi chạy (Local Setup)
+Dành cho người mới muốn chạy source code này trên máy cá nhân:
+
+**Bước 1: Cài đặt môi trường ảo và thư viện**
+```bash
+python -m venv venv
+venv\Scripts\activate   # Trên Windows
+# source venv/bin/activate # Trên Mac/Linux
+pip install -r requirements.txt
+```
+
+**Bước 2: Migrate Cơ sở dữ liệu**
+```bash
+python manage.py makemigrations core
+python manage.py migrate
+```
+
+**Bước 3: Khởi chạy Server**
+```bash
+python manage.py runserver
+```
+Sau đó mở trình duyệt và truy cập: `http://127.0.0.1:8000/`
+
+---
+*Pixiu Flow - Tối ưu hóa dòng tiền, Đơn giản hóa quản trị.*
