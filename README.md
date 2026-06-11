@@ -34,18 +34,21 @@ Pixiu Flow là ứng dụng web quản lý tài chính dành cho chủ kinh doan
 
 ## Tính năng chính
 
-1. Ghi nhận giao dịch doanh thu, nhập hàng và chi phí theo từng giao dịch hoặc nhiều giao dịch cùng lúc.
-2. Quản lý sản phẩm, danh mục, tồn kho ban đầu, giá vốn, ngưỡng cảnh báo và tình trạng hàng hóa.
-3. Theo dõi lịch sử giao dịch, công nợ khách hàng, khoản cần thanh toán và hạn thanh toán.
-4. Cung cấp dashboard tổng quan về doanh thu, lợi nhuận, tiền đã thu, tiền đã chi và dòng tiền thuần.
-5. Phân tích doanh thu, lợi nhuận, cơ cấu chi phí và dòng tiền bằng KPI, bảng so sánh và biểu đồ trực quan.
+1. **Quản lý giao dịch:** Ghi nhận doanh thu, nhập hàng và các khoản chi phí; hỗ trợ nhập một hoặc nhiều giao dịch cùng lúc.
+2. **Quản lý sản phẩm và tồn kho:** Tạo sản phẩm, phân loại danh mục, thiết lập tồn kho ban đầu và theo dõi cảnh báo sắp hết hàng.
+3. **Theo dõi thanh toán và công nợ:** Quản lý giao dịch đã thanh toán, chưa thanh toán, ngày đến hạn và gia hạn thanh toán.
+4. **Dashboard kinh doanh:** Tổng hợp doanh thu, chi phí, lợi nhuận, dòng tiền và các cảnh báo quan trọng.
+5. **Báo cáo và phân tích:** Lọc dữ liệu theo thời gian, xem biểu đồ, sản phẩm nổi bật, cơ cấu chi phí và hiệu quả kinh doanh.
 
 ## Cách chạy sản phẩm
 
 1. Truy cập website Pixiu Flow được triển khai công khai trên Railway qua link demo bên dưới.
 2. Chọn **Đăng ký**, tạo tài khoản mới và hoàn thành bước thiết lập thông tin ban đầu.
 3. Khai báo sản phẩm hoặc tồn kho có sẵn nếu cần, sau đó ghi nhận thử doanh thu, nhập hàng và chi phí.
-4. Mở các trang **Bảng theo dõi**, **Sản phẩm & tồn kho**, **Lịch sử giao dịch** và **Xem thêm chỉ số** để xem kết quả demo.
+4. Mở **Giao dịch** để ghi nhận doanh thu, nhập hàng hoặc chi phí.
+5. Mở **Sản phẩm & tồn kho** để kiểm tra số lượng hàng và cảnh báo tồn kho.
+6. Mở **Bảng theo dõi** để xem doanh thu, chi phí, lợi nhuận và thông báo thanh toán.
+7. Mở **Xem thêm chỉ số** để xem báo cáo, bộ lọc thời gian và các biểu đồ phân tích.
 
 ## Link demo
 
