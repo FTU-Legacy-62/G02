@@ -13,20 +13,20 @@
 | Họ tên | Mã sinh viên | Vai trò chính |
 |--------|--------------|---------------|
 | Đặng Như Ngọc Thạch | 2312380032 | Fullstack Developer |
-| Nguyễn Thanh Ngân | 2312380021 | UI/UX Designer |
-| Kiều Xuân Thuỷ | 2311380703 | Nghiên cứu người dùng và nghiệp vụ |
+| Nguyễn Thanh Ngân | 2312380021 | Nghiên cứu dữ liệu, người dùng và logic tài chính |
+| Kiều Xuân Thuỷ | 2311380703 |  UI/UX Designer |
 | Nguyễn Bảo Ngọc | 2313380022 | UI/UX Designer |
-| Vũ Đức Anh | 2312380806 | Nghiên cứu dữ liệu và logic tài chính |
+| Vũ Đức Anh | 2312380806 | Nghiên cứu dữ liệu, người dùng và logic tài chính |
 
 ## Mô tả sản phẩm
 
-Pixiu Flow là ứng dụng web quản lý tài chính dành cho chủ kinh doanh nhỏ, freelancer và cá nhân đang theo dõi tiền bằng sổ tay hoặc bảng tính. Sản phẩm giúp ghi nhận giao dịch, quản lý sản phẩm và tồn kho, doanh thu và chi phí trên một hệ thống thống nhất. Các báo cáo được trình bày trực quan, dễ hiểu và không yêu cầu người dùng có kiến thức kế toán chuyên sâu.
+Pixiu Flow là ứng dụng web quản lý tài chính dành cho chủ kinh doanh nhỏ và người bán hàng cá nhân — những người thường theo dõi thu chi bằng trực giác hoặc ghi chép thủ công mà không có công cụ hỗ trợ rõ ràng. Sản phẩm giúp ghi nhận giao dịch, quản lý sản phẩm và tồn kho, doanh thu và chi phí trên một hệ thống thống nhất. Pixiu Flow được thiết kế để người không có kiến thức tài chính vẫn hiểu được mình đang lời hay lỗ, và lỗ ở đâu. Từ đó, người dùng có thể đưa ra quyết định kinh doanh dựa trên số liệu thực tế thay vì cảm tính.
+
 
 ## Vấn đề sản phẩm giải quyết
-
-- **Vấn đề:** Dữ liệu thu, chi, tồn kho thường phân tán, dễ nhập sai và khó đánh giá tình hình kinh doanh.
-- **Đối tượng gặp vấn đề:** Chủ cửa hàng nhỏ, freelancer và người tự quản lý hoạt động kinh doanh.
-- **Vì sao đáng quan tâm:** Thiếu thông tin tài chính kịp thời có thể dẫn đến thất thoát, thiếu hụt dòng tiền và quyết định kinh doanh không chính xác.
+- **Vấn đề:** Nhiều chủ kinh doanh nhỏ tin rằng mình đang có lời vì bán giá cao hơn giá vốn — nhưng thực tế không tính đến các chi phí phát sinh khác như tiền điện, thuê mặt bằng, hao hụt hàng hóa hay khấu hao thiết bị. Kết quả là họ không biết mình thực sự đang lời hay lỗ, và nếu lỗ thì lỗ ở đâu.
+- **Đối tượng gặp vấn đề:** Chủ shop nhỏ, người bán hàng online, freelancer và hộ kinh doanh cá thể — những người tự quản lý tài chính mà không có kế toán hoặc phần mềm hỗ trợ, thường dùng sổ tay, Excel hoặc ghi nhớ trong đầu.
+- **Vì sao đáng quan tâm:** Không nắm được tình hình tài chính thực tế khiến người kinh doanh khó đưa ra quyết định đúng — không biết nên tăng giá, cắt chi phí hay mở rộng quy mô. Về dài hạn, đây là nguyên nhân phổ biến khiến các mô hình kinh doanh nhỏ thua lỗ âm thầm dù doanh thu trông có vẻ ổn.
 
 ## Người dùng mục tiêu
 
