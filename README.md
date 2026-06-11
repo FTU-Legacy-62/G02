@@ -12,11 +12,11 @@
 
 | Họ tên | Mã sinh viên | Vai trò chính |
 |--------|--------------|---------------|
-| Đặng Như Ngọc Thạch | 2312380032 | Fullstack Developer |
 | Nguyễn Thanh Ngân | 2312380021 | Nghiên cứu dữ liệu, người dùng và logic tài chính |
+| Vũ Đức Anh | 2312380806 | Nghiên cứu người dùng và logic tài chính |
 | Kiều Xuân Thuỷ | 2311380703 |  UI/UX Designer |
 | Nguyễn Bảo Ngọc | 2313380022 | UI/UX Designer |
-| Vũ Đức Anh | 2312380806 | Nghiên cứu người dùng và logic tài chính |
+| Đặng Như Ngọc Thạch | 2312380032 | Fullstack Developer |
 
 ## Mô tả sản phẩm
 
