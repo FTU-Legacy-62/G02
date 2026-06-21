@@ -557,6 +557,10 @@
     min-width: 1420px;
 }
 
+.setup-products-table tbody td {
+    vertical-align: top;
+}
+
 .setup-products-table th:nth-child(1),
 .setup-products-table td:nth-child(1) {
     width: 3%;
