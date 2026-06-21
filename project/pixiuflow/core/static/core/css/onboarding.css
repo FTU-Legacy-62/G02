@@ -558,7 +558,16 @@
 }
 
 .setup-products-table tbody td {
-    vertical-align: top;
+    vertical-align: top !important;
+}
+
+.setup-products-table tbody td.setup-product-name-cell {
+    vertical-align: top !important;
+}
+
+.setup-product-name-cell input[name="product_name[]"] {
+    display: block;
+    margin-top: 0 !important;
 }
 
 .setup-products-table th:nth-child(1),

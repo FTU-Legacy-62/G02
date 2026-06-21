@@ -62,7 +62,7 @@
                             data-original-cost="{{ row.estimated_unit_cost|default:'0' }}"
                         >
                             <td class="opening-row-number">{{ forloop.counter }}</td>
-                            <td>
+                            <td class="setup-product-name-cell">
                                 <input type="hidden" name="product_id[]" value="{% if form_submitted %}{{ row.product_id }}{% endif %}" autocomplete="off">
                                 <input type="hidden" name="confirm_opening_change[]" value="{% if form_submitted %}{{ row.confirm_opening_change|default:'0' }}{% else %}0{% endif %}" class="setup-confirm-change" autocomplete="off">
                                 <input type="hidden" name="delete_opening_stock[]" value="{% if form_submitted %}{{ row.delete_opening_stock|default:'0' }}{% else %}0{% endif %}" class="setup-delete-opening" autocomplete="off">
@@ -117,7 +117,7 @@
 <template id="setupProductRowTemplate">
     <tr data-existing="0" data-has-transactions="{{ has_transactions|yesno:'1,0' }}" data-original-quantity="0" data-original-cost="0">
         <td class="opening-row-number"></td>
-        <td>
+        <td class="setup-product-name-cell">
             <input type="hidden" name="product_id[]" value="" autocomplete="off">
             <input type="hidden" name="confirm_opening_change[]" value="0" class="setup-confirm-change" autocomplete="off">
             <input type="hidden" name="delete_opening_stock[]" value="0" class="setup-delete-opening" autocomplete="off">
