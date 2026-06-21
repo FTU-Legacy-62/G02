@@ -567,6 +567,10 @@
     width: 18%;
 }
 
+.setup-products-table td:nth-child(2) input[name="product_name[]"] {
+    min-height: calc((42px * var(--setup-category-level-count, 1)) + (8px * (var(--setup-category-level-count, 1) - 1)));
+}
+
 .setup-products-table th:nth-child(3),
 .setup-products-table td:nth-child(3) {
     width: 17%;
