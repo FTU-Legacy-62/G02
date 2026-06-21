@@ -10,12 +10,12 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = [
     host.strip()
-    for host in os.environ.get("ALLOWED_HOSTS", "127.0.0.1,localhost,.onrender.com").split(",")
+    for host in os.environ.get("ALLOWED_HOSTS", "127.0.0.1,localhost,.up.railway.app").split(",")
     if host.strip()
 ]
-render_hostname = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
-if render_hostname and render_hostname not in ALLOWED_HOSTS:
-    ALLOWED_HOSTS.append(render_hostname)
+railway_public_domain = os.environ.get("RAILWAY_PUBLIC_DOMAIN")
+if railway_public_domain and railway_public_domain not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(railway_public_domain)
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
@@ -23,14 +23,14 @@ CSRF_TRUSTED_ORIGINS = [
     origin.strip()
     for origin in os.environ.get(
         "CSRF_TRUSTED_ORIGINS",
-        "http://127.0.0.1:8000,http://localhost:8000,https://*.onrender.com"
+        "http://127.0.0.1:8000,http://localhost:8000,https://*.up.railway.app"
     ).split(",")
     if origin.strip()
 ]
-if render_hostname:
-    render_origin = f"https://{render_hostname}"
-    if render_origin not in CSRF_TRUSTED_ORIGINS:
-        CSRF_TRUSTED_ORIGINS.append(render_origin)
+if railway_public_domain:
+    railway_origin = f"https://{railway_public_domain}"
+    if railway_origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(railway_origin)
 
 INSTALLED_APPS = [
     'django.contrib.admin',
