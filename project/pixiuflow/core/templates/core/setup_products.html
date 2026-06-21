@@ -237,13 +237,9 @@
             .filter(Boolean);
         const levelCount = builder.querySelectorAll('.setup-category-level').length;
         const maxLevels = Number(builder.dataset.maxLevels || 4);
-        const row = builder.closest('tr');
         builder.querySelector('.setup-category-value').value = parts.join(' / ');
         builder.querySelector('.setup-category-remove-level').hidden = levelCount <= 1;
         builder.querySelector('.setup-category-add-level').hidden = levelCount >= maxLevels;
-        if (row) {
-            row.style.setProperty('--setup-category-level-count', String(levelCount));
-        }
     }
 
     function addCategoryLevel(builder, value = '') {
